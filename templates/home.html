@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Grade Predictor</title>
+</head>
+<body>
+    <h2>Welcome, {{ username }}!</h2>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <h3>Enter Student Details</h3>
+    <form method="POST">
+        Name: <input type="text" name="name" required><br><br>
+        Marks: <input type="number" name="marks" required><br><br>
+        <input type="submit" value="Predict Grade">
+    </form>
+</body>
+</html>

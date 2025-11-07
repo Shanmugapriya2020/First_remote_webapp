@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+</head>
+<body>
+    <h2>Grade Result for {{ name }}</h2>
+    <p><b>Marks:</b> {{ marks }}</p>
+    <p><b>Grade:</b> {{ grade }}</p>
+    <br>
+    <a href="{{ url_for('home') }}">Predict Again</a> |
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
