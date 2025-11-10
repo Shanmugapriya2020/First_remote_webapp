@@ -1,0 +1,206 @@
+```yaml
+intent: measure
+secondary_intents: []
+parameters:
+  - name: leakage_current
+    role: measure
+    unit: A
+    setpoint: null
+    range: null
+    tolerance: null
+    limits: []
+    confidence: 0.95
+    raw: "leakage current"
+  - name: voltage
+    role: source
+    unit: V
+    setpoint: 1.0
+    range:
+      min: 0.9
+      max: 1.1
+      unit: V
+      inclusive: true
+    tolerance:
+      type: absolute
+      value: 0.1
+      unit: V
+    limits: []
+    confidence: 0.98
+    raw: "1.0V ± 0.1 V"
+dut:
+  name: null
+  channel: 3
+  fixturing: null
+  notes: null
+conditions:
+  temperature:
+    value: null
+    unit: "°C"
+  frequency:
+    value: null
+    unit: "Hz"
+  bias:
+    value: null
+    unit: null
+  environment: null
+timing:
+  dwell_time_s: null
+  settle_time_s: null
+  sample_count: null
+  averaging: null
+preferences:
+  brand: null
+  model: null
+  interface: null
+  no_brand_preference: true
+standards: []
+prohibitions: []
+instrument_mapping:
+  required_capabilities:
+    - parameter: leakage_current
+      mode: SMU
+      range_needed:
+        min: null
+        max: null
+        unit: A
+      resolution_needed: null
+      accuracy_needed: null
+    - parameter: voltage
+      mode: SMU
+      range_needed:
+        min: 0.9
+        max: 1.1
+        unit: V
+      resolution_needed: null
+      accuracy_needed: null
+  candidates:
+    - vendor: "Keysight"
+      model: "B2902A"
+      mode: SMU
+      meets_all_requirements: true
+      key_limits:
+        - name: voltage_range_max
+          value: 210
+          unit: V
+        - name: voltage_range_min
+          value: -210
+          unit: V
+        - name: current_range_min
+          value: 1.0e-11
+          unit: A
+        - name: current_resolution_best
+          value: 1.0e-13
+          unit: A
+      notes: "Dual-channel SMU with excellent low-current measurement capability; supports 4-wire and guarding for leakage measurements."
+      score: 98
+    - vendor: "Keithley"
+      model: "2450"
+      mode: SMU
+      meets_all_requirements: true
+      key_limits:
+        - name: voltage_range_max
+          value: 200
+          unit: V
+        - name: voltage_range_min
+          value: -200
+          unit: V
+        - name: current_range_min
+          value: 1.0e-8
+          unit: A
+        - name: current_resolution_best
+          value: 1.0e-12
+          unit: A
+      notes: "Single-channel SMU with guarding and 4-wire; suitable for general leakage measurements down to 10 pA range."
+      score: 95
+    - vendor: "Keithley"
+      model: "2612B"
+      mode: SMU
+      meets_all_requirements: true
+      key_limits:
+        - name: voltage_range_max
+          value: 200
+          unit: V
+        - name: voltage_range_min
+          value: -200
+          unit: V
+        - name: current_range_min
+          value: 1.0e-7
+          unit: A
+        - name: current_resolution_best
+          value: 1.0e-13
+          unit: A
+      notes: "Dual-channel SMU with TSP scripting; suitable for automated leakage testing."
+      score: 93
+    - vendor: "National Instruments"
+      model: "PXIe-4139"
+      mode: SMU
+      meets_all_requirements: true
+      key_limits:
+        - name: voltage_range_max
+          value: 40
+          unit: V
+        - name: voltage_range_min
+          value: -40
+          unit: V
+        - name: current_range_min
+          value: 1.0e-8
+          unit: A
+        - name: current_resolution_best
+          value: 1.0e-12
+          unit: A
+      notes: "PXI-based SMU with high-speed capability; requires PXI chassis."
+      score: 88
+    - vendor: "Rohde & Schwarz"
+      model: "NGU401"
+      mode: SMU
+      meets_all_requirements: true
+      key_limits:
+        - name: voltage_range_max
+          value: 20
+          unit: V
+        - name: voltage_range_min
+          value: 0
+          unit: V
+        - name: current_range_min
+          value: 1.0e-5
+          unit: A
+        - name: current_resolution_best
+          value: 1.0e-9
+          unit: A
+      notes: "Unipolar SMU; voltage range covers requirement; lower current sensitivity than electrometers."
+      score: 75
+  selection:
+    vendor: "Keysight"
+    model: "B2902A"
+    rationale: "Best fit for leakage current measurement with voltage sourcing 0.9–1.1 V. Offers lowest current measurement range (10 fA minimum) and best resolution (100 aA). Dual-channel allows future multi-point testing. Supports guarding and 4-wire for low-noise measurements."
+    constraints_to_watch:
+      - "Use guarded cables and shielding to minimize noise floor for low leakage currents."
+      - "Allow adequate settling time after voltage step to stabilize leakage current reading."
+data_and_reporting:
+  sampling_rate_hz: null
+  file_format: null
+  units_out: A
+assumptions:
+  - what: "Voltage sourcing required"
+    because: "User specifies measuring leakage current 'across' a voltage setpoint; implies instrument must source voltage and measure current simultaneously."
+    confidence: 0.95
+  - what: "Tolerance ±0.1 V is for voltage source stability/accuracy"
+    because: "Standard interpretation of setpoint tolerances in leakage measurements."
+    confidence: 0.9
+  - what: "Leakage current range not specified"
+    because: "No explicit current range or limit provided; assuming typical leakage measurement requirements (sub-nA to µA)."
+    confidence: 0.7
+  - what: "Channel 3 refers to DUT terminal or test point identifier"
+    because: "User specifies 'channel 3' but selected instruments are single or dual channel; likely refers to DUT pin/pad, not instrument channel."
+    confidence: 0.8
+gaps:
+  - what: "Expected leakage current range or maximum value"
+    why_it_matters: "Determines optimal instrument current range selection and integration time settings for best resolution vs. speed tradeoff."
+  - what: "Required current measurement resolution or accuracy"
+    why_it_matters: "Affects instrument selection if sub-pA resolution is critical; electrometers may be preferred over SMUs for <1 pA."
+  - what: "Settling and integration time requirements"
+    why_it_matters: "Leakage measurements often require long settling times (seconds to minutes) for stable readings; affects test throughput."
+  - what: "Environmental conditions (temperature, shielding, humidity)"
+    why_it_matters: "Leakage currents are highly sensitive to temperature and environmental noise; proper shielding and climate control may be required."
+unparsed: null
+```
